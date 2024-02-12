@@ -17,10 +17,11 @@ def compute_metrics(pred):
     }
 
 
-def prepare_dataset(tokenizer):
-    ds = load_dataset("csv", data_files="sample.csv")
-                            
+def prepare_dataset(tokenizer, ds_path):
+    ds = load_dataset("csv", data_files=ds_path)
+    print(ds)
     def tokenize(sample):
+        print(sample)
         return tokenizer(sample["text"], padding=True, truncation=True)    
 
     ds = ds.map(tokenize, batched=True, batch_size=None)    
@@ -48,12 +49,13 @@ def main():
         # logging_dir='./logs'
     )
 
-    ds = prepare_dataset(tokenizer=tokenizer)
+    ds = prepare_dataset(tokenizer=tokenizer, ds_path="./sample.csv")
+    print(ds)
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=ds['train'],
-        eval_dataset=ds['text'],
+        eval_dataset=ds['test'],
         compute_metrics=compute_metrics,
     )
 
