@@ -35,10 +35,10 @@ def main():
     
     training_args = TrainingArguments(
         output_dir='./results',
-        num_train_epochs=1,
-        per_device_train_batch_size=16
-        per_device_eval_batch_size=64,
-        warmup_steps=500,
+        num_train_epochs=2,
+        per_device_train_batch_size=4,
+        per_device_eval_batch_size=4,
+        warmup_steps=20,
         weight_decay=0.01,
         save_total_limit=1,
         dataloader_pin_memory=False, 
