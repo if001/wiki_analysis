@@ -56,7 +56,7 @@ def main():
         args=training_args,
         train_dataset=ds['train'],
         eval_dataset=ds['test'],
-        compute_metrics=compute_metrics,
+        # compute_metrics=compute_metrics,
     )
 
     trainer.train()
