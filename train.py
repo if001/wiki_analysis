@@ -1,3 +1,5 @@
+import argparse
+
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import TrainingArguments, Trainer
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
@@ -30,13 +32,21 @@ def prepare_dataset(tokenizer, ds_path):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--save_dir', default="./save")
+    # parser.add_argument('--save_steps', default=10)
+    parser.add_argument('--epochs', default=3)
+    parser.add_argument('--eval_steps', default=10)
+    parser.add_argument('--logging_steps', default=10)
+    args = parser.parse_args()
+
     model_name = "tohoku-nlp/bert-base-japanese-v3"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=6)
     
     training_args = TrainingArguments(
         output_dir='./results',
-        num_train_epochs=2,
+        num_train_epochs=args.epochs,
         per_device_train_batch_size=2,
         per_device_eval_batch_size=2,
         warmup_steps=20,
@@ -45,7 +55,8 @@ def main():
         dataloader_pin_memory=False, 
         # evaluation_strategy="epoch",
         evaluation_strategy="steps",
-        logging_steps=10,
+        eval_steps=args.eval_steps,
+        logging_steps=args.logging_steps,
         # logging_dir='./logs'
     )
 
@@ -60,6 +71,7 @@ def main():
     )
 
     trainer.train()
+    model.save_pretrained(args.save_dir)
 
 if __name__ == '__main__':
     main()
