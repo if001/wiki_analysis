@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import TrainingArguments, Trainer
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+# from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from datasets import load_dataset
 
 
@@ -19,9 +19,8 @@ def compute_metrics(pred):
 
 def prepare_dataset(tokenizer, ds_path):
     ds = load_dataset("csv", data_files=ds_path)
-
+    
     def tokenize(sample):
-        print(sample)
         return tokenizer(sample["text"], padding=True, truncation=True)    
 
     ds = ds.map(tokenize, batched=True, batch_size=None)    
@@ -46,13 +45,13 @@ def main():
         dataloader_pin_memory=False, 
         # evaluation_strategy="epoch",
         evaluation_strategy="steps",
-        logging_steps=50,
+        logging_steps=10,
         # logging_dir='./logs'
     )
 
     ds = prepare_dataset(tokenizer=tokenizer, ds_path="./sample.csv")
     
-    trainer = Trainer(
+    trainer = trainer(
         model=model,
         args=training_args,
         train_dataset=ds['train'],
