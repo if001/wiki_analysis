@@ -19,12 +19,13 @@ def compute_metrics(pred):
 
 def prepare_dataset(tokenizer, ds_path):
     ds = load_dataset("csv", data_files=ds_path)
-    print(ds)
+
     def tokenize(sample):
         print(sample)
         return tokenizer(sample["text"], padding=True, truncation=True)    
 
     ds = ds.map(tokenize, batched=True, batch_size=None)    
+    ds = ds.shuffle(seed=42)
     ds = ds['train'].train_test_split(test_size=0.1)
     return ds
 
@@ -37,8 +38,8 @@ def main():
     training_args = TrainingArguments(
         output_dir='./results',
         num_train_epochs=2,
-        per_device_train_batch_size=4,
-        per_device_eval_batch_size=4,
+        per_device_train_batch_size=2,
+        per_device_eval_batch_size=2,
         warmup_steps=20,
         weight_decay=0.01,
         save_total_limit=1,
@@ -50,7 +51,7 @@ def main():
     )
 
     ds = prepare_dataset(tokenizer=tokenizer, ds_path="./sample.csv")
-    print(ds)
+    
     trainer = Trainer(
         model=model,
         args=training_args,
