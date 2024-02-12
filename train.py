@@ -32,7 +32,7 @@ def prepare_dataset(tokenizer, ds_path):
 def main():
     model_name = "tohoku-nlp/bert-base-japanese-v3"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=5)
+    model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=6)
     
     training_args = TrainingArguments(
         output_dir='./results',
@@ -56,7 +56,7 @@ def main():
         args=training_args,
         train_dataset=ds['train'],
         eval_dataset=ds['test'],
-        # compute_metrics=compute_metrics,
+        compute_metrics=compute_metrics,
     )
 
     trainer.train()
